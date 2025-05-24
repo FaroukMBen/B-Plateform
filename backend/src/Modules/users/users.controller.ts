@@ -1,44 +1,60 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Body, Param, NotFoundException, ParseIntPipe } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { appuser } from './users.entity';
+import { CreateUserDto, UpdateUserDto } from './users.dto';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
   @Get()
-  findAll(): string {
-    return 'This action returns all users';
+  async findAll(): Promise<appuser[]> {
+    return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): string {
-    return `This action returns a user with id: ${id}`;
+  @Get('id/:id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<appuser> {
+    const user = await this.usersService.findById(id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
-  @Get(':username')
-  findByUsername(@Param('username') username: string): string {
-    return `This action returns a user with username: ${username}`;
+  @Get('username/:username')
+  async findByUsername(@Param('username') username: string): Promise<appuser> {
+    const user = await this.usersService.findByUsername(username);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
-  @Get(':email')
-  findByEmail(@Param('email') email: string): string {
-    return `This action returns a user with email: ${email}`;
+  @Get('email/:email')
+  async findByEmail(@Param('email') email: string): Promise<appuser> {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
   @Post()
-  create(@Body() createUserDto: any): string {
-    return 'This action adds a new user';
+  async create(@Body() createUserDto: CreateUserDto): Promise<appuser> {
+    return this.usersService.create(createUserDto);
   }
 
-  @Post('remove')
-  remove(@Body('id') id: string): string {
-    return `This action removes a user with id: ${id}`;
+  @Delete(':id')
+  async remove(@Body('id', ParseIntPipe) id: number): Promise<void> {
+    return this.usersService.remove(id);
   }
 
   @Post('update')
-  update(@Body('id') id: string, @Body() updateUserDto: any): string {
-    return `This action updates a user with id: ${id}`;
+  async update(
+    @Body('id', ParseIntPipe) id: number, 
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<appuser> {
+    return this.usersService.update(id,updateUserDto);
   }
 
   @Post('verify')
-  verify(@Body('id') id: string): string {
-    return `This action verifies a user with id: ${id}`;
+  async verify(@Body('id', ParseIntPipe) id: number): Promise<appuser> {
+    const user = await this.usersService.verifyUser(id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 }

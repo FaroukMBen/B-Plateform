@@ -5,6 +5,7 @@ import {
   MaxLength,
   MinLength,
   Matches,
+  IsOptional
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -34,4 +35,34 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MaxLength(20, { message: 'Username cannot exceed 20 characters' })
   username: string;
+}
+
+export class UpdateUserDto {
+  @IsOptional()
+  @IsEmail({}, { message: 'Invalid email format' })
+  email?: string;
+
+  @IsOptional()
+  @IsString({ message: 'Username must be a string' })
+  @MaxLength(20, { message: 'Username cannot exceed 20 characters' })
+  username?: string;
+
+  @IsOptional()
+  @IsString({ message: 'Password must be a string' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  @Matches(/[a-z]/, {
+    message: 'Password must contain at least one lowercase letter',
+  })
+  @Matches(/[A-Z]/, {
+    message: 'Password must contain at least one uppercase letter',
+  })
+  @Matches(/\d/, {
+    message: 'Password must contain at least one number',
+  })
+  @Matches(/[@$!%*?&._-]/, {
+    message:
+      'Password must contain at least one special character (e.g., @, !, $, %, etc.)',
+  })
+  @MaxLength(20, { message: 'Password cannot exceed 20 characters' })
+  password?: string;
 }
