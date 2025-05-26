@@ -1,11 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { appuser } from '../users/users.entity';
-import * as bcrypt from 'bcrypt';
-import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../users/users.dto';
-
 
 /*note to myself : the frontend will handle the login and signup thanks to the supabase api,
 so no need to redefine the functions in the authService

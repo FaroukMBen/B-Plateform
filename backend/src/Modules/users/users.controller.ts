@@ -1,4 +1,13 @@
-import { Controller, Get, Delete, Post, Body, Param, NotFoundException, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Post,
+  Body,
+  Param,
+  NotFoundException,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { appuser } from './users.entity';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
@@ -45,10 +54,10 @@ export class UsersController {
 
   @Post('update')
   async update(
-    @Body('id', ParseIntPipe) id: number, 
-    @Body() updateUserDto: UpdateUserDto
+    @Body('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<appuser> {
-    return this.usersService.update(id,updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Post('verify')

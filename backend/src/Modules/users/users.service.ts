@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { appuser } from './users.entity';
@@ -22,8 +26,13 @@ export class UsersService {
       const user = this.userRepository.create(createUserDto);
       user.password = await bcrypt.hash(createUserDto.password, 10);
       return await this.userRepository.save(user);
-    } catch (error) {
-      throw new BadRequestException('Failed to create user: ' + error.message);
+    } catch (error: unknown) {
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(
+          'Failed to create user: ' + error.message,
+        );
+      }
+      throw error;
     }
   }
 
@@ -50,7 +59,6 @@ export class UsersService {
 
     return updatedUser;
   }
-
 
   async remove(id: number): Promise<void> {
     const user = await this.findById(id);
